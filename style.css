@@ -16,6 +16,8 @@ header {
 
 .top-buttons button {
   margin-left: 10px;
+  padding: 5px 10px;
+  cursor: pointer;
 }
 
 main {
@@ -23,20 +25,23 @@ main {
 }
 
 #product-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* СЕТКА */
+  gap: 20px;
 }
 
 .product {
   border: 1px solid black;
   background-color: white;
   padding: 10px;
-  width: 200px;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+  position: relative;
 }
 
 .delete-checkbox {
-  margin-bottom: 5px;
+  position: absolute;
+  top: 10px;
+  left: 10px;
 }
 
 footer {
