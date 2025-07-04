@@ -2,43 +2,38 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Product List</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header>
-    <button onclick="showPage('list')">Product List</button>
-    <button onclick="showPage('add')">Add Product</button>
+    <h1>Product List</h1>
+    <div class="top-buttons">
+      <button onclick="showPage('add')">ADD</button>
+      <button id="delete-product-btn">MASS DELETE</button>
+    </div>
   </header>
 
   <main>
-    <!-- Product List Page -->
     <section id="product-list-page">
-      <h1>Product List</h1>
-      <button id="delete-product-btn">MASS DELETE</button>
       <div id="product-container"></div>
     </section>
 
-    <!-- Add Product Page -->
     <section id="add-product-page" style="display: none;">
-      <h1>Add Product</h1>
+      <h2>Add Product</h2>
       <form id="product_form" onsubmit="addProduct(event)">
-        <label>SKU: <input type="text" id="sku" required></label><br/>
-        <label>Name: <input type="text" id="name" required></label><br/>
-        <label>Price ($): <input type="number" id="price" step="0.01" required></label><br/>
-
+        <label>SKU: <input type="text" id="sku" required /></label><br />
+        <label>Name: <input type="text" id="name" required /></label><br />
+        <label>Price ($): <input type="number" id="price" step="0.01" required /></label><br />
         <label>Type Switcher:
-          <select id="productType" onchange="switchType()">
+          <select id="productType" onchange="switchType()" required>
             <option value="">Select type</option>
             <option value="DVD">DVD</option>
             <option value="Book">Book</option>
             <option value="Furniture">Furniture</option>
           </select>
         </label>
-
         <div id="type-fields"></div>
-
         <button type="submit">Save</button>
         <button type="button" onclick="showPage('list')">Cancel</button>
       </form>
@@ -49,9 +44,9 @@
 
   <script>
     let products = [
-      { sku: "JVC200123", name: "Acme DISC", price: 1.00, type: "DVD", size: 700 },
-      { sku: "GGWP0007", name: "War and Peace", price: 20.00, type: "Book", weight: 2 },
-      { sku: "TR120555", name: "Chair", price: 40.00, type: "Furniture", height: 24, width: 45, length: 15 }
+      { sku: "JVC200123", name: "Acme DISC", price: 1.0, type: "DVD", size: 700 },
+      { sku: "GGWP0007", name: "War and Peace", price: 20.0, type: "Book", weight: 2 },
+      { sku: "TR120555", name: "Chair", price: 40.0, type: "Furniture", height: 24, width: 45, length: 15 }
     ];
 
     function showPage(page) {
@@ -83,16 +78,15 @@
       const type = document.getElementById('productType').value;
       const fields = document.getElementById('type-fields');
       fields.innerHTML = '';
-
       if (type === "DVD") {
-        fields.innerHTML = `<label>Size (MB): <input type="number" id="size" required></label><p>Please provide size in MB</p>`;
+        fields.innerHTML = `<label>Size (MB): <input type="number" id="size" required /></label><p>Please provide size in MB</p>`;
       } else if (type === "Book") {
-        fields.innerHTML = `<label>Weight (KG): <input type="number" id="weight" required></label><p>Please provide weight in KG</p>`;
+        fields.innerHTML = `<label>Weight (KG): <input type="number" id="weight" required /></label><p>Please provide weight in KG</p>`;
       } else if (type === "Furniture") {
         fields.innerHTML = `
-          <label>Height (CM): <input type="number" id="height" required></label>
-          <label>Width (CM): <input type="number" id="width" required></label>
-          <label>Length (CM): <input type="number" id="length" required></label>
+          <label>Height (CM): <input type="number" id="height" required /></label>
+          <label>Width (CM): <input type="number" id="width" required /></label>
+          <label>Length (CM): <input type="number" id="length" required /></label>
           <p>Please provide dimensions in HxWxL format</p>
         `;
       }
@@ -121,12 +115,11 @@
 
     document.getElementById('delete-product-btn').addEventListener('click', () => {
       const checkboxes = document.querySelectorAll('.delete-checkbox');
-      checkboxes.forEach(checkbox => {
-        if (checkbox.checked) {
-          const index = parseInt(checkbox.getAttribute('data-index'));
-          products.splice(index, 1);
-        }
-      });
+      const indexesToDelete = Array.from(checkboxes)
+        .filter(cb => cb.checked)
+        .map(cb => parseInt(cb.getAttribute('data-index')))
+        .sort((a, b) => b - a);
+      indexesToDelete.forEach(i => products.splice(i, 1));
       renderProducts();
     });
 
