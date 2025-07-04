@@ -12,14 +12,12 @@
     <button onclick="showPage('add')">Add Product</button>
   </nav>
 
-  <!-- Product List Page -->
   <div id="list-page" class="page">
     <h1>Product List</h1>
     <button id="delete-product-btn">MASS DELETE</button>
     <div id="product-container"></div>
   </div>
 
-  <!-- Product Add Page -->
   <div id="add-page" class="page" style="display:none;">
     <h1>Product Add</h1>
     <form id="product_form">
@@ -59,11 +57,7 @@
   </div>
 
   <script>
-    let products = [
-  { sku: "JVC200123", name: "Acme DISC", price: 1.00, type: "DVD", size: 700 },
-  { sku: "GGWP0007", name: "War and Peace", price: 20.00, type: "Book", weight: 2 },
-  { sku: "TR120555", name: "Chair", price: 40.00, type: "Furniture", height: 24, width: 45, length: 15 }
-];
+    let products = [];
 
     function showPage(page) {
       document.getElementById('list-page').style.display = page === 'list' ? 'block' : 'none';
@@ -124,7 +118,6 @@
       showPage('list');
     }
 
-    // Initial
     renderProducts();
   </script>
 </body>
