@@ -59,7 +59,11 @@
   </div>
 
   <script>
-    let products = [];
+    let products = [
+  { sku: "JVC200123", name: "Acme DISC", price: 1.00, type: "DVD", size: 700 },
+  { sku: "GGWP0007", name: "War and Peace", price: 20.00, type: "Book", weight: 2 },
+  { sku: "TR120555", name: "Chair", price: 40.00, type: "Furniture", height: 24, width: 45, length: 15 }
+];
 
     function showPage(page) {
       document.getElementById('list-page').style.display = page === 'list' ? 'block' : 'none';
