@@ -2,121 +2,133 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Product Manager</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product List</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-  <nav>
+  <header>
     <button onclick="showPage('list')">Product List</button>
     <button onclick="showPage('add')">Add Product</button>
-  </nav>
+  </header>
 
-  <div id="list-page" class="page">
-    <h1>Product List</h1>
-    <button id="delete-product-btn">MASS DELETE</button>
-    <div id="product-container"></div>
-  </div>
+  <main>
+    <!-- Product List Page -->
+    <section id="product-list-page">
+      <h1>Product List</h1>
+      <button id="delete-product-btn">MASS DELETE</button>
+      <div id="product-container"></div>
+    </section>
 
-  <div id="add-page" class="page" style="display:none;">
-    <h1>Product Add</h1>
-    <form id="product_form">
-      <label>SKU: <input type="text" id="sku" /></label><br />
-      <label>Name: <input type="text" id="name" /></label><br />
-      <label>Price ($): <input type="number" id="price" /></label><br />
+    <!-- Add Product Page -->
+    <section id="add-product-page" style="display: none;">
+      <h1>Add Product</h1>
+      <form id="product_form" onsubmit="addProduct(event)">
+        <label>SKU: <input type="text" id="sku" required></label><br/>
+        <label>Name: <input type="text" id="name" required></label><br/>
+        <label>Price ($): <input type="number" id="price" step="0.01" required></label><br/>
 
-      <label>Type Switcher:
-        <select id="productType">
-          <option value="">Select</option>
-          <option value="DVD">DVD</option>
-          <option value="Book">Book</option>
-          <option value="Furniture">Furniture</option>
-        </select>
-      </label><br />
+        <label>Type Switcher:
+          <select id="productType" onchange="switchType()">
+            <option value="">Select type</option>
+            <option value="DVD">DVD</option>
+            <option value="Book">Book</option>
+            <option value="Furniture">Furniture</option>
+          </select>
+        </label>
 
-      <div id="DVD" class="type-fields">
-        <label>Size (MB): <input type="number" id="size" /></label>
-        <p>"Product description"</p>
-      </div>
+        <div id="type-fields"></div>
 
-      <div id="Book" class="type-fields">
-        <label>Weight (KG): <input type="number" id="weight" /></label>
-        <p>"Product description"</p>
-      </div>
+        <button type="submit">Save</button>
+        <button type="button" onclick="showPage('list')">Cancel</button>
+      </form>
+    </section>
+  </main>
 
-      <div id="Furniture" class="type-fields">
-        <label>Height (CM): <input type="number" id="height" /></label><br />
-        <label>Width (CM): <input type="number" id="width" /></label><br />
-        <label>Length (CM): <input type="number" id="length" /></label>
-        <p>"Product description"</p>
-      </div>
-
-      <button type="button" onclick="saveProduct()">Save</button>
-      <button type="button" onclick="showPage('list')">Cancel</button>
-    </form>
-  </div>
+  <footer>Scandiweb Test assignment</footer>
 
   <script>
-    let products = [];
+    let products = [
+      { sku: "JVC200123", name: "Acme DISC", price: 1.00, type: "DVD", size: 700 },
+      { sku: "GGWP0007", name: "War and Peace", price: 20.00, type: "Book", weight: 2 },
+      { sku: "TR120555", name: "Chair", price: 40.00, type: "Furniture", height: 24, width: 45, length: 15 }
+    ];
 
     function showPage(page) {
-      document.getElementById('list-page').style.display = page === 'list' ? 'block' : 'none';
-      document.getElementById('add-page').style.display = page === 'add' ? 'block' : 'none';
+      document.getElementById('product-list-page').style.display = page === 'list' ? 'block' : 'none';
+      document.getElementById('add-product-page').style.display = page === 'add' ? 'block' : 'none';
+      if (page === 'list') renderProducts();
     }
 
     function renderProducts() {
       const container = document.getElementById('product-container');
       container.innerHTML = '';
-      products.forEach(p => {
+      products.forEach((product, index) => {
         const div = document.createElement('div');
         div.className = 'product';
         div.innerHTML = `
-          <input type="checkbox" class="delete-checkbox" data-sku="${p.sku}" />
-          <p>${p.sku}</p>
-          <p>${p.name}</p>
-          <p>${p.price.toFixed(2)} $</p>
-          ${p.type === 'DVD' ? `<p>Size: ${p.size} MB</p>` : ''}
-          ${p.type === 'Book' ? `<p>Weight: ${p.weight} KG</p>` : ''}
-          ${p.type === 'Furniture' ? `<p>Dimension: ${p.height}x${p.width}x${p.length}</p>` : ''}
+          <input type="checkbox" class="delete-checkbox" data-index="${index}">
+          <p><strong>${product.sku}</strong></p>
+          <p>${product.name}</p>
+          <p>${product.price.toFixed(2)} $</p>
+          ${product.type === "DVD" ? `<p>Size: ${product.size} MB</p>` : ''}
+          ${product.type === "Book" ? `<p>Weight: ${product.weight} KG</p>` : ''}
+          ${product.type === "Furniture" ? `<p>Dimension: ${product.height}x${product.width}x${product.length}</p>` : ''}
         `;
         container.appendChild(div);
       });
     }
 
+    function switchType() {
+      const type = document.getElementById('productType').value;
+      const fields = document.getElementById('type-fields');
+      fields.innerHTML = '';
+
+      if (type === "DVD") {
+        fields.innerHTML = `<label>Size (MB): <input type="number" id="size" required></label><p>Please provide size in MB</p>`;
+      } else if (type === "Book") {
+        fields.innerHTML = `<label>Weight (KG): <input type="number" id="weight" required></label><p>Please provide weight in KG</p>`;
+      } else if (type === "Furniture") {
+        fields.innerHTML = `
+          <label>Height (CM): <input type="number" id="height" required></label>
+          <label>Width (CM): <input type="number" id="width" required></label>
+          <label>Length (CM): <input type="number" id="length" required></label>
+          <p>Please provide dimensions in HxWxL format</p>
+        `;
+      }
+    }
+
+    function addProduct(e) {
+      e.preventDefault();
+      const newProduct = {
+        sku: document.getElementById('sku').value,
+        name: document.getElementById('name').value,
+        price: parseFloat(document.getElementById('price').value),
+        type: document.getElementById('productType').value
+      };
+
+      if (newProduct.type === "DVD") newProduct.size = parseFloat(document.getElementById('size').value);
+      if (newProduct.type === "Book") newProduct.weight = parseFloat(document.getElementById('weight').value);
+      if (newProduct.type === "Furniture") {
+        newProduct.height = parseFloat(document.getElementById('height').value);
+        newProduct.width = parseFloat(document.getElementById('width').value);
+        newProduct.length = parseFloat(document.getElementById('length').value);
+      }
+
+      products.push(newProduct);
+      showPage('list');
+    }
+
     document.getElementById('delete-product-btn').addEventListener('click', () => {
-      const checked = document.querySelectorAll('.delete-checkbox:checked');
-      checked.forEach(chk => {
-        const sku = chk.getAttribute('data-sku');
-        products = products.filter(p => p.sku !== sku);
+      const checkboxes = document.querySelectorAll('.delete-checkbox');
+      checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          const index = parseInt(checkbox.getAttribute('data-index'));
+          products.splice(index, 1);
+        }
       });
       renderProducts();
     });
-
-    document.getElementById('productType').addEventListener('change', function () {
-      document.querySelectorAll('.type-fields').forEach(el => el.style.display = 'none');
-      const selected = this.value;
-      if (selected) document.getElementById(selected).style.display = 'block';
-    });
-
-    function saveProduct() {
-      const sku = document.getElementById('sku').value;
-      const name = document.getElementById('name').value;
-      const price = parseFloat(document.getElementById('price').value);
-      const type = document.getElementById('productType').value;
-      const product = { sku, name, price, type };
-
-      if (type === 'DVD') product.size = parseFloat(document.getElementById('size').value);
-      if (type === 'Book') product.weight = parseFloat(document.getElementById('weight').value);
-      if (type === 'Furniture') {
-        product.height = parseFloat(document.getElementById('height').value);
-        product.width = parseFloat(document.getElementById('width').value);
-        product.length = parseFloat(document.getElementById('length').value);
-      }
-
-      products.push(product);
-      renderProducts();
-      showPage('list');
-    }
 
     renderProducts();
   </script>
